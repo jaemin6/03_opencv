@@ -1,8 +1,6 @@
 import cv2
 
-cap = cv2.VideoCapture(0)  # 웹캠 열기 (0은 기본 카메라)
-
-# 해상도 설정
+cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
@@ -11,15 +9,13 @@ while True:
     if not ret:
         break
 
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    cv2.imshow('Webcam', frame)
 
-    # 영상 출력
-    cv2.imshow('Original', frame)
-    cv2.imshow('Gray', gray)
-    cv2.imshow('HSV', hsv)
-
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord(' '):   # 스페이스바를 누르면 저장
+        cv2.imwrite('line_tape.jpg', frame)
+        print('사진 저장됨: line_tape.jpg')
+    elif key == ord('q'): # q 누르면 종료
         break
 
 cap.release()
