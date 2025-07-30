@@ -4,7 +4,22 @@ import numpy as np
 img = cv2.imread('../img/hand.jpg')
 img2 = img.copy()
 
+# 그레이 스케일 및 바이너리 스케일 변환 ---①
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+ret, th = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY_INV)
 
+# 컨투어 찾기와 그리기 ---②
+temp, contours, heiarchy = cv2.findContours(th, cv2.RETR_EXTERNAL, \
+                                         cv2.CHAIN_APPROX_SIMPLE)
+cntr = contours[0]
+cv2.drawContours(img, [cntr], -1, (0, 255,0), 1)
+
+# 볼록 선체 찾기(좌표 기준)와 그리기 ---③
+hull = cv2.convexHull(cntr)
+cv2.drawContours(img2, [hull], -1, (0,255,0), 1)
+
+# 볼록 선체 만족 여부 확인 ---④
+print(cv2.isContourConvex(cntr), cv2.isContourConvex(hull))
 
 
 
