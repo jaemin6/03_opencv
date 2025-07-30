@@ -1,21 +1,26 @@
-import numpy as np
+import cv2
 
-# 이미지 크기 확인
-h, w = img.shape
+# 0번 웹캠 열기 (내장 카메라일 경우)
+cap = cv2.VideoCapture(0)
 
-# 관심 영역 좌표 (예: A4 용지가 이미지 가운데 있다고 가정)
-x, y, w_roi, h_roi = w//4, h//4, w//2, h//2
+if not cap.isOpened():
+    print("웹캠을 열 수 없습니다.")
+    exit()
 
-# 마스크 생성 (검은 바탕에 관심 영역만 흰색)
-mask = np.zeros_like(img)
-mask[y:y+h_roi, x:x+w_roi] = 255
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        print("프레임을 읽을 수 없습니다.")
+        break
 
-# 마스크 적용
-masked_img = cv2.bitwise_and(binary_fixed, binary_fixed, mask=mask)
+    cv2.imshow('Webcam View', frame)
 
-# ROI 시각화 (원본 영상에 사각형 표시)
-img_color = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
-cv2.rectangle(img_color, (x,y), (x+w_roi, y+h_roi), (0,255,0), 2)
+    key = cv2.waitKey(1)
+    if key == ord('s'):  # s 키 누르면 저장
+        cv2.imwrite('../img/captured_line.png', frame)
+        print("사진 저장 완료!")
+    elif key == ord('q'):  # q 키 누르면 종료
+        break
 
-cv2.imshow('Masked Image', masked_img)
-cv2.imshow('ROI', img_color)
+cap.release()
+cv2.destroyAllWindows()
