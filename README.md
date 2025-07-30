@@ -153,10 +153,12 @@ masked = cv2.bitwise_and(frame, frame, mask=binary)
 
 ## 🖼️ 예시 이미지 모음
 ### 📷 히스토그램 분석 화면
-<img width="450" alt="histogram_example" src="https://upload.wikimedia.org/wikipedia/commons/5/56/Histogramme.png" />
+<img width="300" height="500" alt="histogram" src="https://github.com/user-attachments/assets/873d3ad9-258b-45f6-863e-3abddffe221a" />
+
 
 ### 🎯 중심점 표시 예시
-<img width="450" alt="centroid_example" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Image_moments.svg/512px-Image_moments.svg.png" />
+<img width="300" height="500" alt="centroid" src="https://github.com/user-attachments/assets/283c2558-d04b-4890-b41f-e6fa0dc6a936" />
+
 
 ## 🛠 사용한 라이브러리 요약
 
