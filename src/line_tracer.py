@@ -1,28 +1,37 @@
 import cv2
 import numpy as np
 
-# 1. 사진 불러오기 (이미 그레이스케일로 불러옴)
+# 1. 이미지 불러오기 (grayscale)
 img = cv2.imread('../img/line_tape.png', cv2.IMREAD_GRAYSCALE)
 
-# 2. 고정 임계값 이진화
-ret, binary_fixed = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
+# 2. 곤심영역 마우스로 드래그
+cv2.imshow('Select ROI', img)
+roi_rect = cv2.selectROI('Select ROI', img, showCrossHair=True, fromCenter=False)
+cv2.destroyWindow('Select ROI')  # ROI 선택 후 창 닫기
 
-# 3. 적응적 이진화
-binary_adapt = cv2.adaptiveThreshold(
-    img, 255, cv2.ADAPTIVE_THRESH_MEAN_C, 
-    cv2.THRESH_BINARY, 11, 2)
+# 3. ROI 좌표 추출
+x, y, w, h = roi_rect
 
-# 4. 관심영역 ROI 설정 및 시각화
-h, w = img.shape  # ✅ img는 이미 gray임
+# 선택이 유효할 때만 실행
+if w > 0 and h > 0:
+    roi = img[y:y+h, x:x+w]
+    img_color = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+    cv2.rectangle(img_color, (x, y), (x+w, y+h), (0, 255, 0), 2)
 
-# 관심영역 추출
-roi = img[h//2-100:h//2+100, w//2-30:w//2+30]
+    # 4. 이진화 처리 (고정 + 적응)
+    _, binary_fixed = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
+    binary_adapt = cv2.adaptiveThreshold(
+        img, 255, cv2.ADAPTIVE_THRESH_MEAN_C,
+        cv2.THRESH_BINARY, 11, 2)
 
-# 시각화용 이미지 (컬러로 변환 후 사각형 그리기)
-img_color = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
-cv2.rectangle(img_color, (w//2 - 30, h//2 - 100), (w//2 + 30, h//2 + 100), (0, 255, 0), 2)
+    # 5. 결과 창 표시 (한글 없이)
+    cv2.imshow('Gray', img)
+    cv2.imshow('Fixed', binary_fixed)
+    cv2.imshow('Adapt', binary_adapt)
+    cv2.imshow('ROI', roi)
+    cv2.imshow('Boxed', img_color)
 
-cv2.imshow('ROI', img_color)
-cv2.imshow('Cut', roi)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+else:
+    print("ROI 캔슬")
